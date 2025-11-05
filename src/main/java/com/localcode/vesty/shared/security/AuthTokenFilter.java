@@ -1,6 +1,6 @@
 package com.localcode.vesty.shared.security;
 
-import com.localcode.vesty.user.auth.service.UserService;
+import com.localcode.vesty.user.auth.service.AuthService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,11 +18,11 @@ import java.io.IOException;
 @Component
 public class AuthTokenFilter extends OncePerRequestFilter {
     private final JwtUtils jwtUtils;
-    private final UserService userService;
+    private final AuthService authService;
 
-    public AuthTokenFilter(JwtUtils jwtUtils, UserService userService) {
+    public AuthTokenFilter(JwtUtils jwtUtils, AuthService authService) {
         this.jwtUtils = jwtUtils;
-        this.userService = userService;
+        this.authService = authService;
     }
 
     @Override
@@ -33,7 +33,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
             if (jwt != null && jwtUtils.validateJwtToken(jwt)) {
                 String email = jwtUtils.getEmailFromJwtToken(jwt);
 
-                UserDetails userDetails = userService.findByEmail(email)
+                UserDetails userDetails = authService.findByEmail(email)
                         .map(user -> org.springframework.security.core.userdetails.User.builder()
                                 .username(user.getEmail())
                                 .password(user.getPassword())

@@ -1,7 +1,7 @@
-package com.localcode.vesty.user.auth.controller;
+package com.localcode.vesty.user.auth;
 
-import com.localcode.vesty.user.auth.dto.UserRequest;
-import com.localcode.vesty.user.auth.service.UserService;
+import com.localcode.vesty.user.auth.dto.SignupRequest;
+import com.localcode.vesty.user.auth.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.apache.catalina.User;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,15 +13,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/public")
 public class AuthController {
-    private final UserService userService;
+    private final AuthService authService;
 
     @PostMapping("/login")
     public User authenticate(@RequestBody User user) {
         return null;
     }
 
-    @PostMapping("/users")
-    public User create(@RequestBody UserRequest user) {
-        return null;
+    @PostMapping("/users/signup")
+    public void create(@RequestBody SignupRequest signup) {
+        authService.createUser(signup);
     }
 }

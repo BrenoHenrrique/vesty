@@ -1,7 +1,7 @@
 package com.localcode.vesty.user.auth.service;
 
 import com.localcode.vesty.user.auth.UserEntity;
-import com.localcode.vesty.user.auth.UserRepository;
+import com.localcode.vesty.user.auth.AuthRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,12 +15,12 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
-    private final UserRepository userRepository;
+    private final AuthRepository authRepository;
 
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        UserEntity user = userRepository.findByEmail(email)
+        UserEntity user = authRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado com email: " + email));
 
         if (!user.getIsEnabled()) {

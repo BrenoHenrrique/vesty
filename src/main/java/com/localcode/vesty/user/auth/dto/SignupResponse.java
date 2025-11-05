@@ -8,7 +8,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class SingupRequest {
+public class SignupResponse {
     @NotBlank(message = "Nome é obrigatório")
     @Size(min = 2, max = 50, message = "Nome deve ter entre 2 e 50 caracteres")
     private String name;
