@@ -1,7 +1,7 @@
-package com.localcode.vesty.user.auth.service;
+package com.localcode.vesty.shared.security;
 
-import com.localcode.vesty.user.auth.UserEntity;
 import com.localcode.vesty.user.auth.AuthRepository;
+import com.localcode.vesty.user.auth.UserEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -23,12 +23,13 @@ public class CustomUserDetailsService implements UserDetailsService {
         UserEntity user = authRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado com email: " + email));
 
-        if (!user.getIsEnabled()) {
+        boolean enabled = user.getIsEnabled();
+        if (!enabled) {
             throw new UsernameNotFoundException("Usuário desabilitado: " + email);
         }
 
         List<SimpleGrantedAuthority> authorities = user.getRoles().stream()
-                .map(role -> new SimpleGrantedAuthority(role))
+                .map(SimpleGrantedAuthority::new)
                 .toList();
 
         return new org.springframework.security.core.userdetails.User(

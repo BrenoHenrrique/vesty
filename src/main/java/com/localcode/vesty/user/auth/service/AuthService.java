@@ -1,12 +1,13 @@
 package com.localcode.vesty.user.auth.service;
 
 import com.localcode.vesty.user.auth.UserEntity;
-import com.localcode.vesty.user.auth.dto.SignupRequest;
+import com.localcode.vesty.user.auth.dto.LoginRequest;
+import com.localcode.vesty.user.auth.dto.LoginResponse;
 
 import java.util.Optional;
 
 public interface AuthService {
-    void createUser(SignupRequest signup);
+    LoginResponse login(LoginRequest login);
 
     Optional<UserEntity> findByEmail(String email);
 }

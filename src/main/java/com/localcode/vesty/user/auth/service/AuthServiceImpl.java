@@ -1,11 +1,14 @@
 package com.localcode.vesty.user.auth.service;
 
-import com.localcode.vesty.shared.exception.BusinessException;
-import com.localcode.vesty.user.auth.UserEntity;
+import com.localcode.vesty.shared.security.JwtUtils;
 import com.localcode.vesty.user.auth.AuthRepository;
-import com.localcode.vesty.user.auth.dto.SignupRequest;
+import com.localcode.vesty.user.auth.UserEntity;
+import com.localcode.vesty.user.auth.dto.LoginRequest;
+import com.localcode.vesty.user.auth.dto.LoginResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -13,19 +16,23 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
+    private final JwtUtils jwtUtils;
     private final AuthRepository authRepository;
-    private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
 
-    @Override
-    public void createUser(SignupRequest signup) {
-        boolean emailExists = authRepository.findByEmail(signup.getEmail()).isPresent();
-        if (emailExists) throw new BusinessException("Email já está em uso: " + signup.getEmail());
+    public LoginResponse login(LoginRequest login) {
+        Authentication auth = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(login.getEmail(), login.getPassword())
+        );
 
-        UserEntity user = new UserEntity();
-        user.setName(signup.getName());
-        user.setEmail(signup.getEmail());
-        user.setPassword(passwordEncoder.encode(signup.getPassword()));
-        authRepository.save(user);
+        String token = jwtUtils.generateJwtToken(auth);
+
+        LoginResponse response = new LoginResponse();
+        response.setEmail(login.getEmail());
+        response.setName(auth.getName());
+        response.setToken(token);
+
+        return response;
     }
 
     @Override
