@@ -1,5 +1,8 @@
 package com.localcode.vesty.user.auth.service;
 
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
+import com.localcode.vesty.shared.exception.BusinessException;
+import com.localcode.vesty.shared.security.GoogleTokenVerifier;
 import com.localcode.vesty.shared.security.JwtUtils;
 import com.localcode.vesty.user.auth.AuthRepository;
 import com.localcode.vesty.user.auth.UserEntity;
@@ -10,7 +13,9 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -38,5 +43,28 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public Optional<UserEntity> findByEmail(String email) {
         return authRepository.findByEmail(email);
+    }
+
+    @Override
+    public LoginResponse loginWithGoogle(@RequestBody Map<String, String> body) {
+        String idToken = body.get("token");
+        try {
+            GoogleIdToken.Payload payload = GoogleTokenVerifier.verify(idToken);
+
+            String email = payload.getEmail();
+            boolean emailVerified = Boolean.TRUE.equals(payload.getEmailVerified());
+            String name = (String) payload.get("name");
+
+            if (!emailVerified) {
+                throw new BusinessException("E-mail do Google não verificado.");
+            }
+
+//            String token = jwtUtils.generateJwtToken(user);
+
+            return null;
+
+        } catch (Exception e) {
+            return null;
+        }
     }
 }
