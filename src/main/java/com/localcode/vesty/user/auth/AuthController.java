@@ -2,6 +2,8 @@ package com.localcode.vesty.user.auth;
 
 import com.localcode.vesty.user.auth.dto.LoginRequest;
 import com.localcode.vesty.user.auth.dto.LoginResponse;
+import com.localcode.vesty.user.auth.dto.SignupRequest;
+import com.localcode.vesty.user.auth.dto.SignupResponse;
 import com.localcode.vesty.user.auth.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,6 +22,11 @@ public class AuthController {
     @PostMapping("/login")
     public LoginResponse authenticate(@RequestBody LoginRequest login) {
         return service.login(login);
+    }
+
+    @PostMapping("/users/signup")
+    public void createUser(@RequestBody SignupRequest signup) {
+        service.createUser(signup);
     }
 
     @PostMapping("/login/google")

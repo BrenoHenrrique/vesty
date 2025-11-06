@@ -38,23 +38,11 @@ public class SecurityConfig {
     private String issuerUri;
 
     @Bean
-    @Order(1)
-    public SecurityFilterChain publicEndpoints(HttpSecurity http) {
-        http
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .securityMatcher("/public/**")
-                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
-                .csrf(AbstractHttpConfigurer::disable)
-                .oauth2ResourceServer(AbstractHttpConfigurer::disable);
-        return http.build();
-    }
-
-    @Bean
-    @Order(2)
-    public SecurityFilterChain protectedEndpoints(HttpSecurity http) {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/public/**").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )

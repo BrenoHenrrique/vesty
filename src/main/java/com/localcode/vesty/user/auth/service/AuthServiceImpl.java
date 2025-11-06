@@ -8,10 +8,12 @@ import com.localcode.vesty.user.auth.AuthRepository;
 import com.localcode.vesty.user.auth.UserEntity;
 import com.localcode.vesty.user.auth.dto.LoginRequest;
 import com.localcode.vesty.user.auth.dto.LoginResponse;
+import com.localcode.vesty.user.auth.dto.SignupRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -23,6 +25,7 @@ import java.util.Optional;
 public class AuthServiceImpl implements AuthService {
     private final JwtUtils jwtUtils;
     private final AuthRepository authRepository;
+    private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
 
     public LoginResponse login(LoginRequest login) {
@@ -66,5 +69,19 @@ public class AuthServiceImpl implements AuthService {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    @Override
+    public void createUser(SignupRequest signup) {
+        boolean emailExists = authRepository.existsByEmail(signup.getEmail());
+        if (emailExists) {
+            throw new BusinessException("Email já está em uso: " + signup.getEmail());
+        }
+
+        UserEntity user = new UserEntity();
+        user.setName(signup.getName());
+        user.setEmail(signup.getEmail());
+        user.setPassword(passwordEncoder.encode(signup.getPassword()));
+        authRepository.save(user);
     }
 }

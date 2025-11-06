@@ -3,6 +3,7 @@ package com.localcode.vesty.user.auth.service;
 import com.localcode.vesty.user.auth.UserEntity;
 import com.localcode.vesty.user.auth.dto.LoginRequest;
 import com.localcode.vesty.user.auth.dto.LoginResponse;
+import com.localcode.vesty.user.auth.dto.SignupRequest;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.Map;
@@ -14,4 +15,6 @@ public interface AuthService {
     Optional<UserEntity> findByEmail(String email);
 
     LoginResponse loginWithGoogle(@RequestBody Map<String, String> body);
+
+    void createUser(SignupRequest signup);
 }
