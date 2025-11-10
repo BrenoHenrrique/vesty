@@ -1,28 +1,25 @@
 package com.localcode.vesty.shared.security;
 
-import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
-import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
-import com.google.api.client.http.javanet.NetHttpTransport;
-import com.google.api.client.json.jackson2.JacksonFactory;
-
-import java.util.Collections;
+import com.google.api.client.json.webtoken.JsonWebToken;
+import com.google.auth.oauth2.TokenVerifier;
+import com.localcode.vesty.shared.exception.BusinessException;
 
 public class GoogleTokenVerifier {
     private static final String CLIENT_ID = "309451493449-57t261jfh58m72soqgkfn4r7888ttu5n.apps.googleusercontent.com";
 
-    public static GoogleIdToken.Payload verify(String idTokenString) throws Exception {
-        GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(
-                new NetHttpTransport(),
-                new JacksonFactory()
-        )
-                .setAudience(Collections.singletonList(CLIENT_ID))
-                .build();
+    private GoogleTokenVerifier() {
+    }
 
-        GoogleIdToken idToken = verifier.verify(idTokenString);
-        if (idToken != null) {
-            return idToken.getPayload();
-        } else {
-            throw new RuntimeException("Invalid Google ID token");
+    public static JsonWebToken.Payload verify(String idTokenString) {
+        try {
+            TokenVerifier verifier = TokenVerifier.newBuilder()
+                    .setAudience(CLIENT_ID)
+                    .build();
+
+            JsonWebToken jsonWebToken = verifier.verify(idTokenString);
+            return jsonWebToken.getPayload();
+        } catch (Exception e) {
+            throw new BusinessException("Invalid Google ID token", e);
         }
     }
 }
