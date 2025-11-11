@@ -6,12 +6,11 @@ import lombok.Setter;
 @Getter
 @Setter
 public class MaterialDTO {
-
-    private String code;
+    private String id;
     private String name;
 
-    public MaterialDTO(String code, String name) {
-        this.code = code;
+    public MaterialDTO(String id, String name) {
+        this.id = id;
         this.name = name;
     }
 }

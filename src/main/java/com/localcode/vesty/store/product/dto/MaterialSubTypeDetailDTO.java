@@ -7,17 +7,16 @@ import java.util.List;
 
 @Getter
 @Setter
-public class MaterialCategoryDetailDTO {
+public class MaterialSubTypeDetailDTO {
 
     private String id;
     private String name;
 
-    private List<MaterialSubTypeDetailDTO> subTypes;
+    private List<MaterialDTO> materials;
 
-    public MaterialCategoryDetailDTO(String id, String name, List<MaterialSubTypeDetailDTO> subTypes) {
+    public MaterialSubTypeDetailDTO(String id, String name, List<MaterialDTO> materials) {
         this.id = id;
         this.name = name;
-        this.subTypes = subTypes;
+        this.materials = materials;
     }
 }
-
