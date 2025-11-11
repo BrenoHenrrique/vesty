@@ -11,4 +11,5 @@ public class ApiResponse<T> {
     private String error;
     private Integer status;
     private Long timestamp;
+    private boolean ok;
 }
