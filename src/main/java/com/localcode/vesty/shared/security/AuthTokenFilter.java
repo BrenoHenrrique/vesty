@@ -17,11 +17,11 @@ import java.io.IOException;
 
 @Component
 public class AuthTokenFilter extends OncePerRequestFilter {
-    private final JwtUtils jwtUtils;
+    private final TokenProvider tokenProvider;
     private final AuthService authService;
 
-    public AuthTokenFilter(JwtUtils jwtUtils, AuthService authService) {
-        this.jwtUtils = jwtUtils;
+    public AuthTokenFilter(TokenProvider tokenProvider, AuthService authService) {
+        this.tokenProvider = tokenProvider;
         this.authService = authService;
     }
 
@@ -30,8 +30,8 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                                     FilterChain filterChain) throws ServletException, IOException {
         try {
             String jwt = parseJwt(request);
-            if (jwt != null && jwtUtils.validateJwtToken(jwt)) {
-                String email = jwtUtils.getEmailFromJwtToken(jwt);
+            if (jwt != null && tokenProvider.validateJwtToken(jwt)) {
+                String email = tokenProvider.getEmailFromJwtToken(jwt);
 
                 UserDetails userDetails = authService.findByEmail(email)
                         .map(user -> org.springframework.security.core.userdetails.User.builder()

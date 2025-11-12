@@ -19,7 +19,7 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
-public class JwtUtils {
+public class TokenProvider {
     @Value("${app.jwt.secret:}")
     private String jwtSecret;
     @Value("${app.jwt.expiration:}")
@@ -27,7 +27,7 @@ public class JwtUtils {
 
     private final AuthRepository authRepository;
 
-    private static final Logger logger = LoggerFactory.getLogger(JwtUtils.class);
+    private static final Logger logger = LoggerFactory.getLogger(TokenProvider.class);
 
     private SecretKey getSigningKey() {
         if (jwtSecret.length() < 32) {

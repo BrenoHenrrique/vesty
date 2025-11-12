@@ -3,7 +3,7 @@ package com.localcode.vesty.user.auth.service;
 import com.google.api.client.json.webtoken.JsonWebToken;
 import com.localcode.vesty.shared.exception.BusinessException;
 import com.localcode.vesty.shared.security.GoogleTokenVerifier;
-import com.localcode.vesty.shared.security.JwtUtils;
+import com.localcode.vesty.shared.security.TokenProvider;
 import com.localcode.vesty.user.auth.AuthRepository;
 import com.localcode.vesty.user.auth.UserEntity;
 import com.localcode.vesty.user.auth.dto.LoginRequest;
@@ -26,7 +26,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
-    private final JwtUtils jwtUtils;
+    private final TokenProvider tokenProvider;
     private final AuthRepository authRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
@@ -36,7 +36,7 @@ public class AuthServiceImpl implements AuthService {
                 new UsernamePasswordAuthenticationToken(login.getEmail(), login.getPassword())
         );
 
-        String token = jwtUtils.generateJwtToken(auth);
+        String token = tokenProvider.generateJwtToken(auth);
         UserEntity user = authRepository.findByEmail(login.getEmail()).orElseThrow(EntityNotFoundException::new);
 
         LoginResponse response = new LoginResponse();
