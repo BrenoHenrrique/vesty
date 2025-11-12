@@ -1,8 +1,6 @@
 package com.localcode.vesty.user.auth.service;
 
-import com.google.api.client.json.webtoken.JsonWebToken;
 import com.localcode.vesty.shared.exception.BusinessException;
-import com.localcode.vesty.shared.security.GoogleTokenVerifier;
 import com.localcode.vesty.shared.security.TokenProvider;
 import com.localcode.vesty.user.auth.AuthRepository;
 import com.localcode.vesty.user.auth.UserEntity;
@@ -54,25 +52,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public LoginResponse loginWithGoogle(@RequestBody Map<String, String> body) {
-        String idToken = body.get("token");
-        try {
-            JsonWebToken.Payload payload = GoogleTokenVerifier.verify(idToken);
-
-//            String email = payload.getEmail();
-//            boolean emailVerified = Boolean.TRUE.equals(payload.getEmailVerified());
-//            String name = (String) payload.get("name");
-//
-//            if (!emailVerified) {
-//                throw new BusinessException("E-mail do Google não verificado.");
-//            }
-//
-//            String token = jwtUtils.generateJwtToken(user);
-
-            return null;
-
-        } catch (Exception e) {
-            throw new BusinessException("Invalid Google ID token", e);
-        }
+        return null;
     }
 
     @Override
