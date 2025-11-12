@@ -9,6 +9,7 @@ import com.localcode.vesty.user.auth.UserEntity;
 import com.localcode.vesty.user.auth.dto.LoginRequest;
 import com.localcode.vesty.user.auth.dto.LoginResponse;
 import com.localcode.vesty.user.auth.dto.SignupRequest;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -36,10 +37,11 @@ public class AuthServiceImpl implements AuthService {
         );
 
         String token = jwtUtils.generateJwtToken(auth);
+        UserEntity user = authRepository.findByEmail(login.getEmail()).orElseThrow(EntityNotFoundException::new);
 
         LoginResponse response = new LoginResponse();
         response.setEmail(login.getEmail());
-        response.setName(auth.getName());
+        response.setName(user.getName());
         response.setToken(token);
 
         return response;

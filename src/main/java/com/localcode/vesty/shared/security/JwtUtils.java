@@ -1,7 +1,11 @@
 package com.localcode.vesty.shared.security;
 
+import com.localcode.vesty.user.auth.AuthRepository;
+import com.localcode.vesty.user.auth.UserEntity;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,14 +18,16 @@ import java.util.Date;
 import java.util.List;
 
 @Component
+@RequiredArgsConstructor
 public class JwtUtils {
-    private static final Logger logger = LoggerFactory.getLogger(JwtUtils.class);
-
     @Value("${app.jwt.secret:}")
     private String jwtSecret;
-
     @Value("${app.jwt.expiration:}")
     private int jwtExpirationMs;
+
+    private final AuthRepository authRepository;
+
+    private static final Logger logger = LoggerFactory.getLogger(JwtUtils.class);
 
     private SecretKey getSigningKey() {
         if (jwtSecret.length() < 32) {
@@ -31,7 +37,8 @@ public class JwtUtils {
     }
 
     public String generateJwtToken(Authentication authentication) {
-        String username = authentication.getName();
+        String email = authentication.getName();
+        UserEntity user = authRepository.findByEmail(email).orElseThrow(EntityNotFoundException::new);
 
         List<String> roles = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
@@ -41,7 +48,7 @@ public class JwtUtils {
         Date expiryDate = new Date(now.getTime() + jwtExpirationMs);
 
         return Jwts.builder()
-                .setSubject(username)
+                .setSubject(user.getName())
                 .claim("roles", roles)
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
