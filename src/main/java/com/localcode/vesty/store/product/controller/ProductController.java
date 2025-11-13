@@ -1,10 +1,10 @@
 package com.localcode.vesty.store.product.controller;
 
-import com.localcode.vesty.store.product.ProductEntity;
 import com.localcode.vesty.store.product.dto.ProductDTO;
 import com.localcode.vesty.store.product.dto.ProductFilterDTO;
 import com.localcode.vesty.store.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,23 +17,28 @@ public class ProductController {
     private final ProductService service;
 
     @GetMapping
-    public List<ProductEntity> findAll(ProductFilterDTO filter) {
+    public List<ProductDTO> findAll(ProductFilterDTO filter) {
         return service.findAll(filter);
     }
 
     @GetMapping("/pageable")
-    public List<ProductEntity> findPageable(Pageable pageable, ProductFilterDTO filter) {
+    public Page<ProductDTO> findPageable(Pageable pageable, ProductFilterDTO filter) {
         filter.setPageable(pageable);
         return service.findPageable(filter);
     }
 
+    @GetMapping("/{id}")
+    public ProductDTO findModelById(@PathVariable Long id) {
+        return service.findModelById(id);
+    }
+
     @PostMapping
-    public List<ProductEntity> save(@RequestBody ProductDTO product) {
+    public ProductDTO save(@RequestBody ProductDTO product) {
         return service.save(product);
     }
 
     @PutMapping("/{id}")
-    public List<ProductEntity> edit(@PathVariable Long id, @RequestBody ProductDTO product) {
+    public ProductDTO edit(@PathVariable Long id, @RequestBody ProductDTO product) {
         return service.edit(id, product);
     }
 

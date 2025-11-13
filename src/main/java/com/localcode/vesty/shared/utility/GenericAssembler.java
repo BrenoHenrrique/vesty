@@ -1,6 +1,7 @@
 package com.localcode.vesty.shared.utility;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 import tools.jackson.databind.ObjectMapper;
 
@@ -17,5 +18,9 @@ public class GenericAssembler {
 
     public <T, U> List<U> toCollectionModel(List<T> entities, Class<U> modelClass) {
         return entities.stream().map(entity -> toModel(entity, modelClass)).toList();
+    }
+
+    public <T, U> Page<U> toPageModel(Page<T> sourcePage, Class<U> targetClass) {
+        return sourcePage.map(entity -> toModel(entity, targetClass));
     }
 }

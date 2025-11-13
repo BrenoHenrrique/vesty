@@ -1,19 +1,21 @@
 package com.localcode.vesty.store.product.service;
 
-import com.localcode.vesty.store.product.ProductEntity;
 import com.localcode.vesty.store.product.dto.ProductDTO;
 import com.localcode.vesty.store.product.dto.ProductFilterDTO;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
 public interface ProductService {
-    List<ProductEntity> findAll(ProductFilterDTO filter);
+    List<ProductDTO> findAll(ProductFilterDTO filter);
 
-    List<ProductEntity> findPageable(ProductFilterDTO filter);
+    Page<ProductDTO> findPageable(ProductFilterDTO filter);
 
-    List<ProductEntity> save(ProductDTO product);
+    ProductDTO findModelById(Long id);
 
-    List<ProductEntity> edit(Long id, ProductDTO product);
+    ProductDTO save(ProductDTO product);
+
+    ProductDTO edit(Long id, ProductDTO product);
 
     void delete(Long id);
 }
