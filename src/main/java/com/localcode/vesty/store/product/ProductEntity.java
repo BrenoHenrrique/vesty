@@ -33,14 +33,22 @@ public class ProductEntity {
     private String material;
     private String size;
 
-    @ElementCollection
-    private List<String> tags;
-
-    @ElementCollection
-    private List<String> images;
-
     private double weight;
     private double length;
     private double width;
     private double height;
+
+    @ElementCollection
+    @CollectionTable(
+            name = "product_tags",
+            joinColumns = @JoinColumn(name = "product_id")
+    )
+    private List<String> tags;
+
+    @ElementCollection
+    @CollectionTable(
+            name = "product_images",
+            joinColumns = @JoinColumn(name = "product_id")
+    )
+    private List<String> images;
 }
