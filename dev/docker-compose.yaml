@@ -13,14 +13,6 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-  tesseract-api:
-    build: ../.tesseract
-    container_name: tesseract_ocr_api
-    restart: always
-    ports:
-      - "8088:8080"
-    environment:
-      - TESSDATA_PREFIX=/usr/share/tesseract-ocr/4.00/tessdata
 
 volumes:
   postgres_data:
