@@ -29,6 +29,19 @@
     <properties>
         <java.version>25</java.version>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>software.amazon.awssdk</groupId>
+                <artifactId>bom</artifactId>
+                <version>2.25.66</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -107,6 +120,16 @@
             <artifactId>google-auth-library-oauth2-http</artifactId>
             <version>1.40.0</version>
         </dependency>
+
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>s3</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>auth</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
@@ -137,5 +160,4 @@
             </releases>
         </pluginRepository>
     </pluginRepositories>
-
 </project>

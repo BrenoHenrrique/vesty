@@ -1,0 +1,53 @@
+app:
+  jwt:
+    secret: meuSecretSuperSeguroParaJWTQueDeveSerMuitoLongoEMudadoEmProducao12345
+    expiration: '10800000'
+server:
+  port: '8080'
+
+spring:
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        jdbc:
+          lob:
+            non_contextual_creation: 'true'
+        format_sql: 'true'
+    show-sql: 'true'
+    hibernate:
+      ddl-auto: update
+  application:
+    name: vesty
+  datasource:
+    hikari:
+      connection-timeout: '20000'
+      idle-timeout: '300000'
+      maximum-pool-size: '10'
+      max-lifetime: '1200000'
+      minimum-idle: '2'
+    password: '1'
+    username: postgres
+    url: jdbc:postgresql://localhost:5432/vesty
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://accounts.google.com
+
+logging:
+  level:
+    org:
+      springframework:
+        security: DEBUG
+    com:
+      example:
+        auth: DEBUG
+
+storage:
+  s3:
+    endpoint: http://localhost:9000
+    accessKey: minioadmin
+    secretKey: minioadmin123
+    bucket: vesty
+    region: us-east-1
