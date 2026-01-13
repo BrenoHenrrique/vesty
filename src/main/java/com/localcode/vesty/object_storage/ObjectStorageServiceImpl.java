@@ -11,15 +11,19 @@ import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
-import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class ObjectStorageServiceImpl implements ObjectStorageService {
     private final S3Client s3;
+    private final ExecutorService s3UploadExecutor;
 
     @Value("${storage.s3.bucket}")
     private String bucket;
@@ -28,7 +32,7 @@ public class ObjectStorageServiceImpl implements ObjectStorageService {
 
     public byte[] download(ObjectDownloadRequest object) {
         try {
-            String key = String.join(PATH_SEPARATOR, object.getCompany(), object.getName());
+            String key = String.join(PATH_SEPARATOR, object.company(), object.name());
 
             GetObjectRequest req = GetObjectRequest.builder()
                     .bucket(bucket)
@@ -42,28 +46,36 @@ public class ObjectStorageServiceImpl implements ObjectStorageService {
         }
     }
 
+    @Override
     public void upload(ObjectUploadRequest object) {
+        List<CompletableFuture<Void>> futures = new ArrayList<>();
+
+        for (MultipartFile file : object.files()) {
+            CompletableFuture<Void> future = CompletableFuture.runAsync(() -> uploadSingleFile(object.company(), file), s3UploadExecutor);
+            futures.add(future);
+        }
+
+        CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
+    }
+
+    private void uploadSingleFile(String company, MultipartFile file) {
         try {
             final String SEPARATOR = "-";
-            MultipartFile file = object.getFile();
             String originalName = Optional.ofNullable(file.getOriginalFilename()).orElse("file");
             String name = UUID.randomUUID() + SEPARATOR + originalName;
 
-            String key = String.join(
-                    PATH_SEPARATOR,
-                    object.getCompany(),
-                    name
-            );
+            String key = String.join(PATH_SEPARATOR, company, name);
 
             PutObjectRequest req = PutObjectRequest.builder()
                     .bucket(bucket)
                     .key(key)
                     .contentType(file.getContentType())
                     .build();
-            s3.putObject(req, RequestBody.fromBytes(file.getBytes()));
-        } catch (IOException e) {
-            log.warn("Houve um erro ao enviar o arquivo: {}", e.getMessage());
-            throw new BusinessException("Houve um erro ao enviar o arquivo, entre em contato com o administrador.");
+
+            s3.putObject(req, RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
+        } catch (Exception e) {
+            log.error("Erro ao subir arquivo {}: {}", file.getOriginalFilename(), e.getMessage());
+            throw new BusinessException("Erro ao enviar arquivo.");
         }
     }
 }
