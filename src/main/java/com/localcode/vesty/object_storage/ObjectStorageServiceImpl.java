@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
@@ -76,6 +77,27 @@ public class ObjectStorageServiceImpl implements ObjectStorageService {
         } catch (Exception e) {
             log.error("Erro ao subir arquivo {}: {}", file.getOriginalFilename(), e.getMessage());
             throw new BusinessException("Erro ao enviar arquivo.");
+        }
+    }
+
+    @Override
+    public void remove(ObjectDeleteRequest object) {
+        try {
+            String key = String.join(
+                    "/",
+                    object.company(),
+                    object.name()
+            );
+
+            DeleteObjectRequest req = DeleteObjectRequest.builder()
+                    .bucket(bucket)
+                    .key(key)
+                    .build();
+
+            s3.deleteObject(req);
+        } catch (Exception e) {
+            log.error("Erro ao remover arquivo: {}", e.getMessage());
+            throw new BusinessException("Erro ao remover arquivo.");
         }
     }
 }

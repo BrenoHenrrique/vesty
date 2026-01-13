@@ -4,4 +4,6 @@ public interface ObjectStorageService {
     byte[] download(ObjectDownloadRequest object);
 
     void upload(ObjectUploadRequest object);
+
+    void remove(ObjectDeleteRequest object);
 }

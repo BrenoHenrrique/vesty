@@ -22,4 +22,10 @@ public class ObjectStorageController {
         storage.upload(object);
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping(produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    public ResponseEntity<Void> remove(@RequestParam ObjectDeleteRequest object) {
+        storage.remove(object);
+        return ResponseEntity.ok().build();
+    }
 }
