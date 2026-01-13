@@ -1,9 +1,14 @@
 package com.localcode.vesty.object_storage;
 
+import com.localcode.vesty.object_storage.dto.ObjectDeleteRequest;
+import com.localcode.vesty.object_storage.dto.ObjectDownloadRequest;
+import com.localcode.vesty.object_storage.dto.ObjectUploadRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -18,12 +23,12 @@ public class ObjectStorageController {
     }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Void> upload(ObjectUploadRequest object) {
-        storage.upload(object);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<List<String>> upload(ObjectUploadRequest object) {
+        List<String> names = storage.upload(object);
+        return ResponseEntity.ok(names);
     }
 
-    @GetMapping(produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    @DeleteMapping
     public ResponseEntity<Void> remove(@RequestParam ObjectDeleteRequest object) {
         storage.remove(object);
         return ResponseEntity.ok().build();

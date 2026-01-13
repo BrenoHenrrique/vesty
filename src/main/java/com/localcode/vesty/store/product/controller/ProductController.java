@@ -6,6 +6,7 @@ import com.localcode.vesty.store.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -32,8 +33,8 @@ public class ProductController {
         return service.findModelById(id);
     }
 
-    @PostMapping
-    public ProductDTO save(@RequestBody ProductDTO product) {
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ProductDTO save(ProductDTO product) {
         return service.save(product);
     }
 

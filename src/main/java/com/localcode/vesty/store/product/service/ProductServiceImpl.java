@@ -1,5 +1,7 @@
 package com.localcode.vesty.store.product.service;
 
+import com.localcode.vesty.object_storage.ObjectStorageService;
+import com.localcode.vesty.object_storage.dto.ObjectUploadRequest;
 import com.localcode.vesty.shared.utility.GenericAssembler;
 import com.localcode.vesty.store.product.ProductEntity;
 import com.localcode.vesty.store.product.ProductRepository;
@@ -18,6 +20,7 @@ import java.util.List;
 public class ProductServiceImpl implements ProductService {
     private final GenericAssembler assembler;
     private final ProductRepository repository;
+    private final ObjectStorageService objectStorageService;
 
     @Override
     public List<ProductDTO> findAll(ProductFilterDTO filter) {
@@ -41,7 +44,16 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ProductDTO save(ProductDTO product) {
         ProductEntity entity = assembler.toModel(product, ProductEntity.class);
+
+        List<String> paths = getPathsImages(product);
+        entity.setImages(paths);
+
         return assembler.toModel(repository.save(entity), ProductDTO.class);
+    }
+
+    private List<String> getPathsImages(ProductDTO product) {
+        ObjectUploadRequest uploadRequest = new ObjectUploadRequest(product.getCompany(), product.getFiles());
+        return objectStorageService.upload(uploadRequest);
     }
 
     @Override

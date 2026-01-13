@@ -1,5 +1,8 @@
 package com.localcode.vesty.object_storage;
 
+import com.localcode.vesty.object_storage.dto.ObjectDeleteRequest;
+import com.localcode.vesty.object_storage.dto.ObjectDownloadRequest;
+import com.localcode.vesty.object_storage.dto.ObjectUploadRequest;
 import com.localcode.vesty.shared.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -48,18 +51,21 @@ public class ObjectStorageServiceImpl implements ObjectStorageService {
     }
 
     @Override
-    public void upload(ObjectUploadRequest object) {
+    public List<String> upload(ObjectUploadRequest object) {
+        List<String> paths = new ArrayList<>();
         List<CompletableFuture<Void>> futures = new ArrayList<>();
 
         for (MultipartFile file : object.files()) {
-            CompletableFuture<Void> future = CompletableFuture.runAsync(() -> uploadSingleFile(object.company(), file), s3UploadExecutor);
+            CompletableFuture<Void> future = CompletableFuture.runAsync(() ->
+                    paths.add(uploadSingleFile(object.company(), file)), s3UploadExecutor);
             futures.add(future);
         }
 
         CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
+        return paths;
     }
 
-    private void uploadSingleFile(String company, MultipartFile file) {
+    private String uploadSingleFile(String company, MultipartFile file) {
         try {
             final String SEPARATOR = "-";
             String originalName = Optional.ofNullable(file.getOriginalFilename()).orElse("file");
@@ -74,6 +80,7 @@ public class ObjectStorageServiceImpl implements ObjectStorageService {
                     .build();
 
             s3.putObject(req, RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
+            return key;
         } catch (Exception e) {
             log.error("Erro ao subir arquivo {}: {}", file.getOriginalFilename(), e.getMessage());
             throw new BusinessException("Erro ao enviar arquivo.");

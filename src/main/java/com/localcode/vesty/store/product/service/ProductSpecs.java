@@ -19,9 +19,6 @@ public class ProductSpecs {
             }
 
             specification.addLike("name", filter.getName());
-            specification.addEqual("category", filter.getCategory());
-            specification.addEqual("material", filter.getMaterial());
-            specification.addEqual("subCategory", filter.getSubCategory());
 
             return specification.buildWithAnd();
         };

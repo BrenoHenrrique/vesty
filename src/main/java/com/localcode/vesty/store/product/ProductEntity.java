@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Data
@@ -19,31 +20,10 @@ public class ProductEntity {
     private String id;
 
     private String name;
-    private String category;
-    private String subCategory;
-    private String brand;
     private String color;
-
-    @Column(length = 500)
-    private String shortDescription;
-
-    @Column(length = 5000)
-    private String fullDescription;
-
-    private String material;
     private String size;
-
-    private double weight;
-    private double length;
-    private double width;
-    private double height;
-
-    @ElementCollection
-    @CollectionTable(
-            name = "product_tags",
-            joinColumns = @JoinColumn(name = "product_id")
-    )
-    private List<String> tags;
+    private int quantity;
+    private BigDecimal price;
 
     @ElementCollection
     @CollectionTable(

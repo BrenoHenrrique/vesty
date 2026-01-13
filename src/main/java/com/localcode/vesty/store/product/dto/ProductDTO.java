@@ -2,7 +2,9 @@ package com.localcode.vesty.store.product.dto;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Getter
@@ -10,18 +12,10 @@ import java.util.List;
 public class ProductDTO {
     private String id;
     private String name;
-    private String category;
-    private String subCategory;
-    private String brand;
     private String color;
-    private String shortDescription;
-    private String fullDescription;
-    private String material;
     private String size;
-    private List<String> tags;
-    private List<String> images;
-    private double weight;
-    private double length;
-    private double width;
-    private double height;
+    private int quantity;
+    private String company;
+    private BigDecimal price;
+    List<MultipartFile> files;
 }
